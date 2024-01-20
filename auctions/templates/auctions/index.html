@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if message %}
+    <div><h4>{{ message }}</h4></div>
+{% endif %}
+
+
+    <h2>Active Listings</h2>
+
+    TODO
+
+
+    <h3>Create New Listing</h3>
+    <a href="{% url 'new_listing' %}" class="btn btn-primary">Create New Listing</a>
+
+{% endblock %}
