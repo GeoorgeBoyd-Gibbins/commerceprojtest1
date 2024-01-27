@@ -112,8 +112,13 @@ def new_listing(request):
             if item_category_id == 'none':
                 item_category_id = None 
 
-            elif item_category_id.isnotdigit():
-                item_category_id = None 
+            item_category_id = int(item_category_id)
+
+            try:
+                item_category = Category.objects.get(pk=item_category_id)
+            
+            except Category.DoesNotExist:
+                item_category = None  # or handle the error as you see fit
 
             item_title = request.POST.get('item_title')
 
@@ -185,12 +190,13 @@ def new_listing(request):
                 new_listing.user = request.user
 
                 # Set other fields from the form
+                new_listing.category = item_category
                 new_listing.listing_title = item_title 
                 new_listing.listing_details = item_details
                 new_listing.reserve = item_reserve
                 new_listing.starting_bid = item_starting_price
                 new_listing.closing_time = item_closing_time
-                new_listing.category = item_category_id
+
 
                 if item_image_url:
                     new_listing.listing_image_url = item_image_url
