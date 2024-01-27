@@ -5,18 +5,88 @@
 <h1>Create your New Listing Below</h1>
 <br>
 {% if message %}
-<div>{{ message }}</div>
+<div style="color:red;">{{ message }}</div>
 {% endif %}
-
-<div class="form-group">
+<div class="form-container"> 
     <form action="{% url 'new_listing' %}" method="post">
         {% csrf_token %}
-        {{ form.as_p}}
-        <input class="btn btn-primary" type="submit" value="Submit" ba>
+
+        <div class="form-group">
+            <label for="category_box">Item Category</label>
+            <div class = "input-group">
+                <select name="category" id="category_box" class="form-control">
+                    <option value="none" selected>Please select a category from the list, add a Category, or leave blank.</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.category_name }}</option>
+                    {% endfor %}
+                </select>
+                <span class="input-group-btn" style="margin-left: 2%;">
+                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#addCategoryModal">
+                        <i class="fa fa-plus">Add Category</i>
+                    </button>
+                </span>
+            </div>
+            <div class="form-group">
+                <label for="title_box">Listing Title: <small class="lebal-description">  Please enter the title for your listing. </small></label>
+                <input type="text" id="title_box" name="item_title" class="form-control"></input>
+            </div>
+            <div class="form-group">
+                <label for="details_box">Item Details: <small class="lebal-description">  Include a full description of the item, and the applicable make and model number Bike it ralates to for parts. </small></label>
+                <textarea id="details_box" name="item_details" rows="8" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="start_price_box">Starting Price: <small class="lebal-description">  Default is £1. </small></label>
+                <input type="text" id="start_price_box" name="item_starting_price" blank = True class="form-control"></input>
+            </div>
+            <div class="form-group">
+                <label for="reserve_box">Reserve: <small class="lebal-description">  Please enter the reserve price of the item in GBP. The reserve will be kept secret but you are free to put in in the description. </small></label>
+                <input type="text" id="reserve_box" name="item_reserve" class="form-control"></input>
+            </div>
+            <div class="form-group">
+                <label for="closing_time_box">Closing Time: <small class="lebal-description">  Please provide details of the auction closing time. The default is 36 hours from now.</small></label>
+                <input type="datetime-local" id="closing_time_box" name="item_closing_time" class="form-control"></input>
+            </div> 
+            <div class="form-group">
+                <label for="image_url_box">Item Image URL <small class="lebal-description">  Please enter the URL of an image online showing the item (find an image, right click and copy image address, paste the URL here:</small></label>
+                <input type="url" id="image_url_box" name="item_image_url" class="form-control"></input>
+            </div>
+
+        </div>
+        <br>
+        <div class = "form-group">
+            <input class="btn btn-primary" type="submit" value="Submit">     
+        </div>
     </form>
 
-    Thanks 
+    <!-- Add Category Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'new_listing' %}" method="post">
+                        {% csrf_token %}
+                        <input type="text" name="new_category_name" class="form-control" placeholder="Category Name">
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save Category</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    Thanks 
+    </div>
 </div>
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 {% endblock %}

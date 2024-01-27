@@ -8,8 +8,37 @@
 
 
     <h2>Active Listings</h2>
+    <br>
+    <div class="Listing-Container">
+        {% for listing in listings%}
 
-    TODO
+        <div class="individual-listing">
+            <h3><strong>{{ listing.listing_title }}</strong></h3>
+            <h5><i><strong>Category:</i></strong>{{ listing.category }}</h5>
+            <br>
+            <img src="{{ listing.listing_image_url }}" height=40%  width=40%>
+            <br>
+            <p class="listing_details"><strong><i>>Details</i></strong>{{ listing.listing_details }}</p>
+            <p class = "listing_time"><i><strong>Listing Time:</i></strong> {{ listing.listing_date_time }}</p>
+            <p class= "closing_time"><i><strong>Latest Closing Time:</i></strong> {{ listing.closing_time }}     <small>N.b. The seller can close a listing prematurely so there is no guarantee that the auction will remain open for this long.</small></p>
+            
+            <p class= "Following"><i><strong>Following:</p>
+                {% if listing.following.all %}
+                <ul>
+                {% for follower in listing.following.all %}
+                <li>{{ follower }}</li>
+                {% endfor %}
+                </ul>
+                {% else %}
+                None. 
+                {% endif %}
+        
+
+        </div>
+
+        {% endfor %}
+
+    </div>
 
 
     <h3>Create New Listing</h3>
