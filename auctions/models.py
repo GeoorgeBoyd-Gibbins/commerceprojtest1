@@ -30,13 +30,16 @@ class Listing(models.Model):
     listing_title = models.CharField(max_length=256, verbose_name="Title")
     listing_details = models.TextField(verbose_name="Please enter full detailss of your Listing")
     listing_date_time = models.DateTimeField(default = now, verbose_name="Listing time")
-    current_bid = models.DecimalField(max_digits=10, decimal_places=2, default = 1, verbose_name="Current Bid")
+    starting_price = models.DecimalField(max_digits=10, decimal_places=2, blank = False, default = 1, verbose_name="Starting Price")
+    current_bid = models.DecimalField(max_digits=10, decimal_places=2, null = True, blank = True, verbose_name="Current Bid")
+    sold_price = models.DecimalField(max_digits=10, decimal_places=2, null = True, blank = True, verbose_name="Sold Price")
     reserve = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Reserve")
     closing_time = models.DateTimeField(default = thirtysixhours, verbose_name="closingtime")
     auction_open = models.BooleanField(default = True, verbose_name="Auction Open")
     listing_image_url = models.URLField(verbose_name="URL for images for Listing Item")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings", verbose_name="Listed by")
     following = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="followed_listings", verbose_name="following")
+    
 
     #define other methods 
     def total_followers(self):
