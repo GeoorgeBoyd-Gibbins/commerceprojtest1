@@ -38,7 +38,10 @@ class Listing(models.Model):
     auction_open = models.BooleanField(default = True, verbose_name="Auction Open")
     listing_image_url = models.URLField(verbose_name="URL for images for Listing Item")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings", verbose_name="Listed by")
-    following = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="followed_listings", verbose_name="following")
+    following = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="followers", verbose_name="following")
+
+
+        
     
 
     #define other methods 
@@ -50,6 +53,11 @@ class Listing(models.Model):
     
     def bid_history(self):
         return self.bids.order_by('-amount')
+    
+    def save(self, *args, **kwargs):
+        if self.current_bid is None:
+            self.current_bid = self.starting_price
+        super(Listing, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"Listing ID: {self.id}. Listing: {self.listing_title}.  Listed by: {self.user }. Auction open: {self.auction_open}"
@@ -78,8 +86,30 @@ class Bid(models.Model):
         # This ensures that the latest bids are always first
         ordering = ['-time']
 
+
+    def save(self, *args, **kwargs):
+        super(Bid, self).save(*args, **kwargs)
+        listing = self.listing
+        title = listing.listing_title
+        max_bid = listing.get_max_bid()
+        if max_bid:
+            listing.current_bid = max_bid.amount
+            listing.save()
+
+    def time_since_bid(self):
+        # Calculate the time difference
+        time_difference = now() - self.time
+        # Extract hours and minutes from the time difference
+        hours = time_difference.seconds // 3600
+        minutes = (time_difference.seconds // 60) % 60
+        hours_mins = f"{hours}h:{minutes}m"
+        return hours_mins
+
+        
+
     def __str__(self):
-        return f"{self.user} bid on {self.listing} for {self.amount}"
+        hours_mins_since_bid = self.time_since_bid()
+        return f"{self.user.username} bid on this item {hours_mins_since_bid} ago. \n The bid was for : £{self.amount}\n\n"
     
 
     

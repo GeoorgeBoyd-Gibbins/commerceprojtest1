@@ -2,14 +2,16 @@ from decimal import Decimal
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.timezone import now, timedelta
 
 from .models import Category, Listing, Comment, Bid, User
-from .forms import ListingForm
+from .forms import ListingForm, BidForm 
 
 
 
@@ -213,13 +215,6 @@ def new_listing(request):
                     "message" : "Thanks for your Listing, Good Luck!!",  
                 })
 
-                    
-
-            
-
-
-
-
 
 
 
@@ -230,3 +225,98 @@ def new_listing(request):
         }
         )
 
+
+def listing_details(request, listing_id):
+    listing = get_object_or_404(Listing, pk=listing_id)
+    bid_history = listing.bid_history()
+    form = BidForm()
+    following = request.user in listing.following.all()
+    return render(request, 'auctions/listing_details.html', {
+                  'listing': listing,
+                  'form' : form,
+                  'listing_num' : listing_id,
+                  'bid_history' : bid_history, 
+                  'following' : following, 
+     }) 
+
+
+
+def newbid(request, listing_id):
+    listing = get_object_or_404(Listing, pk=listing_id)
+    listing_price = listing.current_bid
+    new_bid = Decimal(request.POST["amount"])
+    if new_bid <= listing_price:
+        return render(request, "auctions/index.html", {
+            
+            'message2' : "Invalid Bid. Your bid needs to be more that the current listed price."
+        })
+    
+    else:
+        #Create a new bid
+        new_bid_instance = Bid ()
+
+        # Set the user to the currently logged-in user
+        new_bid_instance.user = request.user
+
+        # Set the listing the bid relates to. 
+        new_bid_instance.listing= listing
+
+        # Set the amount 
+
+        new_bid_instance.amount = new_bid
+
+        # Save the listing
+        new_bid_instance.save()
+
+
+        return render(request, "auctions/index.html", {
+            
+            'message3' : "Thanks for your bid, good luck!."
+        }) 
+
+
+
+@login_required
+def follow_tog(request, listing_id):#
+    listing = get_object_or_404(Listing, pk=listing_id)
+    bid_history = listing.bid_history()
+    form = BidForm()
+    following = request.user in listing.following.all()
+    if following:
+        listing.following.remove(request.user)
+        return render(request, 'auctions/listing_details.html', {
+                  'listing': listing,
+                  'form' : form,
+                  'listing_num' : listing_id,
+                  'bid_history' : bid_history, 
+                  'following' : False,
+        }
+        )
+    
+    else:
+        listing.following.add(request.user)
+        return render(request, 'auctions/listing_details.html', {
+            'listing': listing,
+            'form' : form,
+            'listing_num' : listing_id,
+            'bid_history' : bid_history, 
+            'following' : True,
+        }
+        )
+
+
+
+def watchlist(request):
+    user = request.user
+    if user.is_authenticated:
+        followed_listings = Listing.objects.filter(following=request.user)
+        return render(request, 'auctions/followed_listings.html', 
+                      {'followed_listings': followed_listings, 
+                       })
+    
+    else:
+        # Handle the case where the user is not logged in
+        return render(request, 'auctions/index.html', 
+                      {'message': 'You need to be logged in to view the Watchlist page.'})
+
+    

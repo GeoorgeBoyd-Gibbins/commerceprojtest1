@@ -1,0 +1,47 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+
+{% if message %}
+<div>
+    <h4>{{ message }}</h4>
+</div>
+{% endif %}
+
+
+<main>
+    <div class="Wishlist-Container">
+        {% if followed_listings %}
+        <h2>You are currently follwing the items listed below:</h2>
+        <ol>
+            {% for listing in followed_listings %}
+            <li>
+                <div class="individual-listing">
+                    <a href="{% url 'listing_details' listing_id=listing.id %}">
+                        <h3><strong>{{ listing.listing_title }}</strong></h3>
+                    </a>
+                    <div class="details">
+                        <div class="listing_details">
+                            <p><strong>Details</strong></p>
+                            <p> {{ listing.listing_details }} </p>
+                        </div>
+                    </div>
+                    <div class = "price-box">
+                        <div class=price-title"><strong>Current Price:</strong></div><div class="price">£{{ listing.current_bid }} </div> 
+                    </div>
+                
+
+            </li>
+            {% endfor %}
+
+        </ol>
+        {% else %}
+        <div> 
+            You are not currently follwong any listings!
+        </div>
+
+        {% endif %}
+
+    </div>
+</main>
+
+{% endblock %}

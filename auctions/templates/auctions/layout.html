@@ -27,6 +27,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'new_listing' %}">Create a New Listing</a>
                 </li>
+                <li class = "watchlist">
+                    <a class="watchlist=link" href="{% url 'watchlist' %}">Watchlist</a>
+                </li>
             {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'login' %}">Log In</a>

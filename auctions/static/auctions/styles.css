@@ -73,8 +73,7 @@ body {
     height: auto;
     /* Maintains aspect ratio */
     object-fit: cover;
-    /* Crop to fit the box if necessary */
-    margin-left: 5%;
+
 }
 
 .listing_details p {
@@ -99,3 +98,39 @@ body {
     font-weight: bold;
     /* Makes only the first paragraph (title) bold */
 }
+
+.price-box {
+    display: flex;
+    flex-direction: row;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: 1.2%;
+
+    gap: 1%;
+}
+
+.price-title {
+    flex: 1;
+    margin-right: 1%;
+    text-decoration: underline;
+}
+
+.price {
+    flex: 1;
+    margin-left: 10ox;
+    
+}
+
+.details-title {
+    text-align: left;
+}
+
+
+.following-section {
+    border: 1px solid black; 
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 1rem; 
+}
+
+

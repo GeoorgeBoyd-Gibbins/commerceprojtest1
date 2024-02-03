@@ -9,3 +9,18 @@ class ListingForm(ModelForm):
         widgets = {
             'listing_details': forms.Textarea(attrs={'rows': 4, 'cols': 40})
         }
+
+
+class BidForm(ModelForm):
+    amount = forms.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        help_text='Enter your bid in GBP (£)',
+        widget=forms.NumberInput(attrs={'placeholder': 'Enter your bid in GBP (£)'})
+    )
+
+
+    
+    class Meta:
+        model = Bid
+        fields = ['amount']
