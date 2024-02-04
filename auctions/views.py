@@ -320,3 +320,18 @@ def watchlist(request):
                       {'message': 'You need to be logged in to view the Watchlist page.'})
 
     
+
+def comment(request, listing_id):
+    new_comment = request.POST.get('comment')
+    user = request.user
+    listing = get_object_or_404(Listing, pk=listing_id)
+
+    #validate comment length 
+    if len(new_comment) <= 0:
+        return HttpResponse("error no comment added")
+    elif len(new_comment) > 5000:
+        return HttpResponse("Message too long")
+    else:
+        return HttpResponse(new_comment)
+    
+

@@ -10,12 +10,12 @@
 
 
 <main>
-    <div class = "container">
+    <div class="container">
         <h1>LISTING DETAILS PAGE</h1>
         <h2><strong>{{ listing.listing_title }}</strong></h2>
         <div><img src="{{ listing.listing_image_url }}" class="listing-image"></div>
         <div class="following-section">
-            <div class = "follow-unfollow-button">
+            <div class="follow-unfollow-button">
                 {% if following %}
                 <a href="{% url 'follow_tog' listing_id=listing_num %}" class="btn btn-primary">Un-Follow</a>
                 {% else %}
@@ -33,12 +33,12 @@
                 {% else %}
                 None.
                 {% endif %}
-                
+
             </div>
         </div>
 
         <div>
-            <p><strong class = "details-title">Details</strong></p>
+            <p><strong class="details-title">Details</strong></p>
         </div>
         <div>
             <p> {{ listing.listing_details }} </p>
@@ -58,9 +58,9 @@
 
 
 
-        <div class ="bid_history">
+        <div class="bid_history">
             <h5>Bidding History</h5>
-            {%  for bid in bid_history %}
+            {% for bid in bid_history %}
 
             <p>{{ bid}}</p>
 
@@ -69,14 +69,20 @@
         </div>
 
         <div>
-        <form method="POST" action="{% url 'newbid' listing_id=listing_num %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Submit Bid" class="btn btn-primary">
-        </form>
+            <form method="POST" action="{% url 'newbid' listing_id=listing_num %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Submit Bid" class="btn btn-primary">
+            </form>
         </div>
-
-    </div>
+        <div class="comments-box form-container">
+            <form action="{% url 'comment' listing_id=listing_num %}" method="POST">
+                {% csrf_token %}
+                <label for="comments-box">Add a Comment</label>
+                <input id="comments-box" type="text" name="comment" class="input-group">
+                <input class="btn btn-primary" type="submit" value="Submit">
+            </form>
+        </div>
 
 
 </main>
