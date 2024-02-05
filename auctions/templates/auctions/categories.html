@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if message %}
+<div>
+    <h4>{{ message }}</h4>
+</div>
+{% endif %}
+
+
+<div class="category-header">
+    <h2>Categories:<h2>
+</div>
+
+<div class = "category-container">
+    {% if categories %}
+    <ol>
+        {% for category in categories %}
+        <li class = "catagory-item">
+        <a href = "{% url 'category_listings' category_name=category.category_name %}"> {{ category.category_name }} </a>
+        </li>
+        {% endfor %}
+    </ol>
+    {% else %}
+    No Categories yet exist
+    {% endif %}
+</div>
+
+{% endblock %}

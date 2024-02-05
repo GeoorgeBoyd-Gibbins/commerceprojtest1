@@ -136,3 +136,61 @@ body {
 .comments-box {
     border: 1px solid black;
 }
+
+.pagination {
+    width: 100%;
+    display: grid; 
+    grid-template-columns: auto auto;
+    margin-top: 20px; /* Optional: Adds some space above the pagination */
+    gap: 1rem;
+}
+
+.pagenum {
+    min-width: 25%;
+    text-align: right; 
+}
+
+.next-previous {
+    min-width: 25%;
+
+    text-align: left; 
+
+}
+
+
+.listing-header {
+    display: flex;
+    justify-content: space-between; /* Aligns items to the start and end of the container */
+    align-items: center; /* Vertically centers the items */
+}
+
+
+.new-listing-button {
+
+    align-items: right;
+    background-color: green;
+}
+
+.catagory-item {
+    line-height: 2rem;
+    margin-bottom: 1rem;
+}
+
+.message1 {
+    color : red;
+
+}
+
+.message2 {
+    color : green;
+}
+
+.wishlist-widget {
+    color : rgb(152, 4, 4);
+    background-color: rgb(185, 184, 184);
+    border: 1px solid black;
+    padding-left: 1px;
+    padding-right: 1px;
+    font-size: smaller;
+
+}

@@ -2,6 +2,7 @@ from decimal import Decimal
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import IntegrityError
@@ -11,16 +12,20 @@ from django.urls import reverse
 from django.utils.timezone import now, timedelta
 
 from .models import Category, Listing, Comment, Bid, User
-from .forms import ListingForm, BidForm 
+from .forms import ListingForm, BidForm, CommentForm
 
 
 
 
 def index(request):
     listings = Listing.objects.filter(auction_open=True)
+    paginator = Paginator(listings, 5)
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     return render(request, "auctions/index.html", {
-        "listings" : listings
+        "page_obj" : page_obj, 
     })
 
 
@@ -209,10 +214,18 @@ def new_listing(request):
                 # Now use the set() method to assign to the ManyToManyField
                 new_listing.following.set([new_listing.user])
 
+                listings = Listing.objects.filter(auction_open=True)
+                paginator = Paginator(listings, 5)
+                page_number = request.GET.get("page")
+                page_obj = paginator.get_page(page_number)
+
+                
+
 
                 # Redirect to a new URL, display a success message, etc.
                 return render(request, "auctions/index.html", {
                     "message" : "Thanks for your Listing, Good Luck!!",  
+                    "page_obj" : page_obj, 
                 })
 
 
@@ -230,14 +243,22 @@ def listing_details(request, listing_id):
     listing = get_object_or_404(Listing, pk=listing_id)
     bid_history = listing.bid_history()
     form = BidForm()
+    comment_form = CommentForm()
     following = request.user in listing.following.all()
+    comments = Comment.objects.filter(listing=listing)
     return render(request, 'auctions/listing_details.html', {
                   'listing': listing,
                   'form' : form,
                   'listing_num' : listing_id,
                   'bid_history' : bid_history, 
-                  'following' : following, 
+                  'following' : following,
+                  'comment_form' : comment_form, 
+                  'comments' : comments,
      }) 
+
+
+
+
 
 
 
@@ -245,10 +266,15 @@ def newbid(request, listing_id):
     listing = get_object_or_404(Listing, pk=listing_id)
     listing_price = listing.current_bid
     new_bid = Decimal(request.POST["amount"])
+    listings = Listing.objects.filter(auction_open=True)
+    paginator = Paginator(listings, 5)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     if new_bid <= listing_price:
         return render(request, "auctions/index.html", {
-            
-            'message2' : "Invalid Bid. Your bid needs to be more that the current listed price."
+            'message1' : "Invalid Bid. Your bid needs to be more that the current listed price.",
+            "page_obj" : page_obj, 
         })
     
     else:
@@ -267,11 +293,9 @@ def newbid(request, listing_id):
 
         # Save the listing
         new_bid_instance.save()
-
-
         return render(request, "auctions/index.html", {
-            
-            'message3' : "Thanks for your bid, good luck!."
+            'message2' : "Thanks for your bid, good luck!.",
+            "page_obj" : page_obj, 
         }) 
 
 
@@ -316,22 +340,74 @@ def watchlist(request):
     
     else:
         # Handle the case where the user is not logged in
+        listings = Listing.objects.filter(auction_open=True)
+        paginator = Paginator(listings, 5)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
         return render(request, 'auctions/index.html', 
-                      {'message': 'You need to be logged in to view the Watchlist page.'})
+                      {'message': 'You need to be logged in to view the Watchlist page.',
+                       "page_obj" : page_obj, 
+                       })
 
     
 
 def comment(request, listing_id):
-    new_comment = request.POST.get('comment')
-    user = request.user
-    listing = get_object_or_404(Listing, pk=listing_id)
-
-    #validate comment length 
-    if len(new_comment) <= 0:
-        return HttpResponse("error no comment added")
-    elif len(new_comment) > 5000:
-        return HttpResponse("Message too long")
-    else:
-        return HttpResponse(new_comment)
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment_content = comment_form.cleaned_data['comment_content']
     
+    # Create a new comment object
+    new_comment = Comment()
 
+    # populate comment object fields
+    new_comment.user = request.user
+
+    new_comment.comment_content = comment_content
+
+    new_comment.listing = get_object_or_404(Listing, pk=listing_id)
+
+    # Save the new comment
+    new_comment.save()
+
+
+    listings = Listing.objects.filter(auction_open=True)
+    paginator = Paginator(listings, 5)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+
+    # Redirect to a new URL, display a success message, etc.
+    return render(request, "auctions/index.html", {
+        "message" : "Thanks for your Commen!",
+        "page_obj" : page_obj,   
+    })
+
+
+
+
+def categories(request):
+    available_categories = Category.objects.all()
+    print(available_categories)
+    return render(request, "auctions/categories.html", {
+        "categories" : available_categories, 
+    } )
+
+def category_listings(request, category_name):
+
+    # Get the category object, or return a 404 if not found
+    category = get_object_or_404(Category, category_name=category_name)
+
+
+
+    relevent_listings = Listing.objects.filter(category=category)
+
+    paginator = Paginator(relevent_listings, 5)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "auctions/categorylistings.html", {
+        "listings" : relevent_listings, 
+        "category_name" : category_name, 
+        "page_obj" : page_obj, 
+    })

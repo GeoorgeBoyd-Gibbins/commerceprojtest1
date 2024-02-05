@@ -24,3 +24,11 @@ class BidForm(ModelForm):
     class Meta:
         model = Bid
         fields = ['amount']
+
+
+
+class CommentForm(ModelForm):
+
+    class Meta:
+        model= Comment
+        fields = ['comment_content']

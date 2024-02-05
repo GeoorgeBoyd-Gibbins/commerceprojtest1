@@ -3,23 +3,21 @@
 {% block body %}
 
 {% if message1 %}
-<div class="message1">
-    <h6>{{ message1 }}</h6>
+<div>
+    <h4 class = "message1">{{ message1 }}</h4>
 </div>
 
 {% elif message2 %}
-<div class="message2">
-    <h6>{{ message2 }}</h6>
+<div>
+    <h4 class = "message2">{{ message2 }}</h4>
 </div>
 
+
 {% endif %}
 
 
-<div class="listing-header">
-<h2>Active Listings<h2>
-{% if user.is_authenticated %}
-<a href="{% url 'new_listing' %}" class="btn btn-primary new-listing-button">Create New Listing</a>
-{% endif %}
+<div class="category-listing-header">
+<h2>Active Listings for {{ category_name }} <h2>
 </div>
 
 
@@ -41,26 +39,12 @@
         <div class = "price-box">
             <div class=price-title"><strong>Current Price:</strong></div><div class="price">£{{ listing.current_bid }} </div> 
         </div>
-    
-        <div>
-        <p class="Following"><i><strong>Following:</p>
-            {% if listing.following.all %}
-            <ul>
-                {% for follower in listing.following.all %}
-                <li>{{ follower }}</li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            None.
-            {% endif %}
-        </div>
-
 
     </div>
 
     {% endfor %}
-
 </div>
+
 <div class="pagination">
     <div class="pagenum">
             Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}  
@@ -79,7 +63,6 @@
         </div>
     </div>
 </div>
-
 
 
 {% endblock %}

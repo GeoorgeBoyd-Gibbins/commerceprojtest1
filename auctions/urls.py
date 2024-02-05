@@ -13,6 +13,7 @@ urlpatterns = [
     path('follow_tog/<int:listing_id>/', views.follow_tog, name='follow_tog'),
     path('watchlist', views.watchlist, name = "watchlist"), 
     path('comment/<int:listing_id>/', views.comment, name="comment"),
-
+    path('categories', views.categories, name="categories"), 
+    path('category_listings/<str:category_name>/', views.category_listings, name="category_listings"),
     
     ]

@@ -13,6 +13,9 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.id}: Email: {self.email}"
+    
+    def following_count(self):
+        return Listing.objects.filter(following=self).count()
      
 
 class Category(models.Model):
@@ -36,7 +39,7 @@ class Listing(models.Model):
     reserve = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Reserve")
     closing_time = models.DateTimeField(default = thirtysixhours, verbose_name="closingtime")
     auction_open = models.BooleanField(default = True, verbose_name="Auction Open")
-    listing_image_url = models.URLField(verbose_name="URL for images for Listing Item")
+    listing_image_url = models.URLField(max_length=500, verbose_name="URL for images for Listing Item")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings", verbose_name="Listed by")
     following = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="followers", verbose_name="following")
 

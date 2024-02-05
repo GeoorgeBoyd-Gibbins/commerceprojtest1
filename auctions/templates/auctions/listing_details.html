@@ -75,15 +75,30 @@
                 <input type="submit" value="Submit Bid" class="btn btn-primary">
             </form>
         </div>
-        <div class="comments-box form-container">
-            <form action="{% url 'comment' listing_id=listing_num %}" method="POST">
-                {% csrf_token %}
-                <label for="comments-box">Add a Comment</label>
-                <input id="comments-box" type="text" name="comment" class="input-group">
-                <input class="btn btn-primary" type="submit" value="Submit">
-            </form>
-        </div>
 
+        <div class="comments-box form-container">
+            <form method="POST" action="{% url 'comment' listing_id=listing_num %}">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <input type="submit" value="Submit Comment" class="btn btn-primary">
+            </form>
+            {% if not comments %}
+            <p>No Comments for this Item</p>
+            {% else %}
+            <ul>
+            {% for comment in comments %}
+            <li>
+                {{ comment.user}}
+                {{ comment.comment_content }}
+                {{ comment.comment_time }}
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+
+
+
+        </div>
 
 </main>
 
