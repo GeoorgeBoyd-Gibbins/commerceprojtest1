@@ -5,8 +5,8 @@ from django.utils.timezone import now
 from datetime import datetime, timedelta
 
 # used to calculate listing closing time
-def thirtysixhours():
-    return now() + timedelta(hours=36)
+def seventytwohours():
+    return now() + timedelta(hours=72)
 
 
 class User(AbstractUser):
@@ -37,15 +37,11 @@ class Listing(models.Model):
     current_bid = models.DecimalField(max_digits=10, decimal_places=2, null = True, blank = True, verbose_name="Current Bid")
     sold_price = models.DecimalField(max_digits=10, decimal_places=2, null = True, blank = True, verbose_name="Sold Price")
     reserve = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Reserve")
-    closing_time = models.DateTimeField(default = thirtysixhours, verbose_name="closingtime")
+    closing_time = models.DateTimeField(default = seventytwohours, verbose_name="Closing time")
     auction_open = models.BooleanField(default = True, verbose_name="Auction Open")
     listing_image_url = models.URLField(max_length=500, verbose_name="URL for images for Listing Item")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings", verbose_name="Listed by")
     following = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="followers", verbose_name="following")
-
-
-        
-    
 
     #define other methods 
     def total_followers(self):
@@ -112,7 +108,7 @@ class Bid(models.Model):
 
     def __str__(self):
         hours_mins_since_bid = self.time_since_bid()
-        return f"{self.user.username} bid on this item {hours_mins_since_bid} ago. \n The bid was for : £{self.amount}\n\n"
+        return f"{self.user.username} bid on this item {hours_mins_since_bid} ago. \n The bid was for : £{self.amount}.\n\n"
     
 
     

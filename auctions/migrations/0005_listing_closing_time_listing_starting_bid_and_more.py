@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='listing',
             name='closing_time',
-            field=models.DateTimeField(default=auctions.models.thirtysixhours, verbose_name='closingtime'),
+            field=models.DateTimeField(default=auctions.models.seventytwohours, verbose_name='closingtime'),
         ),
         migrations.AddField(
             model_name='listing',

@@ -1,0 +1,64 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="commentguidelines-text">
+    <h1 style="text-decoration: underline;">Community Standards and Participation Guidelines for MXAuctions.co.uk</h1>
+    <p>Welcome to MXAuctions.co.uk! Our community is a vibrant marketplace where members can buy, sell, and engage in discussions about a wide range of items. To ensure a positive experience for everyone, we ask all members to adhere to the following Community Standards and Participation Guidelines, especially when commenting or participating in discussions.</p>
+
+    <h2>1. Respectful Communication</h2>
+    <ul>
+        <li><strong>Be Polite and Respectful:</strong> Always interact with other users in a respectful and polite manner, even in disagreement. Personal attacks, harassment, and offensive language are not tolerated.</li>
+        <li><strong>Constructive Feedback:</strong> When providing feedback or criticism, do so constructively. Aim to provide helpful suggestions and avoid demeaning language.</li>
+    </ul>
+
+    <h2>2. No Discrimination or Hate Speech</h2>
+    <ul>
+        <li><strong>Inclusivity:</strong> Our community is diverse, and we strive to create an inclusive environment. Discrimination or hate speech of any kind, including but not limited to comments related to race, ethnicity, national origin, sex, gender, sexual orientation, religious affiliation, or disabilities, is strictly prohibited.</li>
+        <li><strong>Promote Equality:</strong> Treat all members with equality and fairness. Avoid stereotyping and making assumptions about others.</li>
+    </ul>
+
+    <h2>3. Privacy and Safety</h2>
+    <ul>
+        <li><strong>Personal Information:</strong> Do not share or solicit personal information of any member, including addresses, phone numbers, or email addresses. Respect everyone's privacy.</li>
+        <li><strong>Safety:</strong> Any threats, encouragement of violence, or behaviors that compromise the safety and security of any member in the community are not allowed.</li>
+    </ul>
+
+    <h2>4. Authenticity and Honesty</h2>
+    <ul>
+        <li><strong>Genuine Interactions:</strong> Be honest and authentic in your interactions. Misleading other members, impersonation, and fraudulent claims are prohibited.</li>
+        <li><strong>Transparency:</strong> When commenting about an item you are selling or bidding on, be transparent about your intentions and affiliations.</li>
+    </ul>
+
+    <h2>5. Adherence to Auction Rules</h2>
+    <ul>
+        <li><strong>Auction Integrity:</strong> Comments should not undermine the integrity of the auction process. Do not attempt to manipulate bids or engage in activities that unfairly influence the auction outcome.</li>
+        <li><strong>Compliance:</strong> Ensure that your comments comply with all auction rules, terms, and conditions set forth by MXAuctions.co.uk.</li>
+    </ul>
+
+    <h2>6. Reporting and Enforcement</h2>
+    <ul>
+        <li><strong>Reporting Violations:</strong> If you encounter comments or behavior that violate these guidelines, please report them to our moderation team for review.</li>
+        <li><strong>Consequences:</strong> Violations of these guidelines may result in actions ranging from a warning to a temporary or permanent ban from the community, depending on the severity of the violation.</li>
+    </ul>
+
+    <h2>7. Amendments</h2>
+    <ul>
+        <li><strong>Updates:</strong> MXAuctions.co.uk reserves the right to update these Community Standards and Participation Guidelines at any time. Members are encouraged to review these guidelines regularly to stay informed about their responsibilities.</li>
+    </ul>
+
+    <p>By participating in the MXAuctions.co.uk community, you agree to abide by these guidelines and help maintain a welcoming and respectful environment for all members. Thank you for being a part of our community and contributing to its success.</p>
+</div>
+<div class = "guideline-button">
+    <a href="{% url 'listing_details' listing_id=listing_id %}" class="btn btn-secondary">Return to Listing</a>
+</div>
+
+
+
+{% endblock %}

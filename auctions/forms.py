@@ -15,7 +15,6 @@ class BidForm(ModelForm):
     amount = forms.DecimalField(
         max_digits=10, 
         decimal_places=2, 
-        help_text='Enter your bid in GBP (£)',
         widget=forms.NumberInput(attrs={'placeholder': 'Enter your bid in GBP (£)'})
     )
 

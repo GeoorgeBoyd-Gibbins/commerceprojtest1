@@ -2,6 +2,13 @@
 
 {% block body %}
 
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+
 {% if message1 %}
 <div class="message1">
     <h6>{{ message1 }}</h6>
@@ -26,9 +33,13 @@
 <div class="Listing-Container">
     {% for listing in page_obj %}
     <div class="individual-listing">
+        {% if user.is_authenticated %}
         <a href="{% url 'listing_details' listing_id=listing.id %}">
             <h3><strong>{{ listing.listing_title }}</strong></h3>
         </a>
+        {% else %}
+        <h3><strong>{{ listing.listing_title }}</strong></h3>
+        {% endif %}
         <h5><i><strong>Category:</i></strong>{{ listing.category }}</h5>
         <br>
         <div class="photo_and_details">

@@ -17,9 +17,17 @@
 
 
 <div class="category-listing-header">
-<h2>Active Listings for {{ category_name }} <h2>
+<h2>Active Listings for "{{ category_name }}" <h2>
 </div>
 
+
+{% if not listings %}
+<div>
+    No current items are listed in this catagory. 
+</div>
+
+
+{% else %}
 
 <div class="Listing-Container">
     {% for listing in page_obj %}
@@ -41,8 +49,9 @@
         </div>
 
     </div>
-
     {% endfor %}
+
+
 </div>
 
 <div class="pagination">
@@ -64,5 +73,6 @@
     </div>
 </div>
 
+{% endif %}
 
 {% endblock %}

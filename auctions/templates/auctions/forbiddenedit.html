@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="forbidden-message-box">
+    <div class="message-content">
+        <div class="forbid-message-ttile">You are not permitted to edit this listing.</div>
+        <div class="forbid-message">Only the User who posted the listing is able to edit the listing details.</div>
+        <a href="{% url 'listing_details' listing_id=listing_id %}" class="btn btn-secondary return-to-listing-button">Return to Listing</a>
+    </div>
+</div>
+
+
+
+{% endblock %}

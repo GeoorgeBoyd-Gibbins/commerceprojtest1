@@ -1,105 +1,230 @@
 {% extends "auctions/layout.html" %}
 {% block body %}
 
-{% if message %}
-<div>
-    <h4>{{ message }}</h4>
-</div>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
 {% endif %}
 
 
 
 <main>
-    <div class="container">
-        <h1>LISTING DETAILS PAGE</h1>
+    <h2 class="main-title">LISTING DETAILS PAGE</h2>
+    <div class="listing-details-container">
         <h2><strong>{{ listing.listing_title }}</strong></h2>
-        <div><img src="{{ listing.listing_image_url }}" class="listing-image"></div>
-        <div class="following-section">
-            <div class="follow-unfollow-button">
-                {% if following %}
-                <a href="{% url 'follow_tog' listing_id=listing_num %}" class="btn btn-primary">Un-Follow</a>
-                {% else %}
-                <a href="{% url 'follow_tog' listing_id=listing_num %}" class="btn btn-primary">Follow</a>
+        <div class="two-cols">
+            <div class ="left-side">
+                <img src="{{ listing.listing_image_url }}" class="listing-image">
+                {% if user.is_authenticated and listing.user != user %}
+                <form method="POST" action="{% url 'listing_details' listing_id=listing_num %}">
+                    {% csrf_token %}
+                    <div class="bid-form-group"> 
+                        <input type ="text" name = "amount" class="bid-input" placeholder="Enter your bid in GBP">
+                        <input type="submit" value="Submit Bid" class="btn btn-primary bid-submit">
+                    </div>
+                </form>
                 {% endif %}
-            </div>
-            <div>
-                <p class="Following"><i><strong>Following:</strong></i></p>
-                {% if listing.following.all %}
-                <ul>
-                    {% for follower in listing.following.all %}
-                    <li>{{ follower }}</li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                None.
+                {% if listing.user == user %}
+                <div class="own-item-pane">
+                    <div class="own-itwm-pane-title-bar">
+                        <div class="own-itwm-pane-title-bar-left"><h4>This is your item! <br>
+                            <small>Total bids: {{ number_bids }}</small></h4>
+                        </div>
+                        <div class="own-itwm-pane-title-bar-right">
+                            <a href="{% url 'editlisting' listing_id=listing.id %}" class="btn btn-secondary edit-button">Edit Listing</a> 
+                        </div>
+                    </div>
+
+                    {% if number_bids > 0 %}
+                    <ul>
+                        <li>A bid for <strong style="text-decoration: underline;">£{{ highest_bid }}</strong> is the current winning bid!</li>
+                            {% if reserve_met %}
+                                <li>Your reserve of £{{ reserve }} has been met.</li>
+                            {% else %}
+                                <li>Your reserve of £{{ reserve }} has <strong style="text-decoration: underline;">NOT</strong> been met.</li>
+                            {% endif %}
+                        <li>The auction closes in: {{ time_left }}</li> 
+                    </ul>
+                    {% else %}
+                    <ul>
+                        <li>No bids placed.</li>
+                        <li>Your reserve for this item is set at £{{ reserve }}.</li>
+                        <li>The auction closes in: {{ time_left }}</li> 
+                    </ul>
+                    {% endif %}
+                </div>
+                {% elif is_highest_bidder %}
+                <div class="winning-bid-pane">
+                    <h4>Congratulations!</h4>
+                    <ul>
+                        <li>Your bid for <strong style="text-decoration: underline;">£{{ user_bid_amount }}</strong> is the current winning bid!</li>
+                        <li>Total bids you've made: {{ number_user_bids }}</li>
+                        {% if reserve_met %}
+                        <li>The Seller's Reserve has been met.</li>
+                        {% else %}
+                        <li>The Seller's Reserve has <strong style="text-decoration: underline;">NOT</strong> been met.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% elif bid_superceeded %}
+                <div class = "losing-bid-pane">
+                    <h4>Your bid has been superceeded!</h4>
+                    <ul>
+                        <li>Your bid for <strong style="text-decoration: underline;">£{{ user_bid_amount }}</strong> has been superceeded</li>
+                        <li>Total bids you've made: {{ number_user_bids }}</li>
+                        <li>The current winning bid is <strong style="text-decoration: underline;">£{{ highest_bid.amount }}</strong></li>
+                        {% if reserve_met %}
+                        <li>The Seller's Reserve has been met.</li>
+                        {% else %}
+                        <li>The Seller's Reserve has <strong style="text-decoration: underline;">NOT</strong> been met.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% elif number_user_bids == 0 %}
+
+                    {% if number_bids > 0 %}
+                
+                    <div class = "no-bid-pane">
+                        <h4>You have not bid on this item.<br>
+                        <small>Total bids: {{ number_bids }} </small></h4>
+                        <p>Current Bid: {{ highest_bid }}</p>
+                        {% if reserve_met %}
+                        <p>The Seller's Reserve has been met.</p>
+                        {% else %}
+                        <p>The Seller's Reserve has <strong style="text-decoration: underline;">NOT</strong> been met.</p>
+                        {% endif %}
+                        <p>The auction closes in: {{ time_left }}</p>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class = "no-bid-pane">
+                        <h4>You have not bid on this item.<br>
+                        <small>Total bids: {{ number_bids }} </small></h4>
+                        <p>Starting Price: £{{ highest_bid }}</p>
+                        {% if reserve_met %}
+                        <p>The Seller's Reserve has been met.</p>
+                        {% else %}
+                        <p>The Seller's Reserve has <strong style="text-decoration: underline;">NOT</strong> been met.</p>
+                        {% endif %}
+                        <p>The auction closes in: {{ time_left }}</p>
+
+                    </div>
+
+                    {% endif %}
+
+
+
                 {% endif %}
-
+                <div class="bid-history">
+                    <p><i><strong>Item's Bidding History:</strong></i></p>
+                    {% if bid_history %}
+                        <ul>
+                        {% for bid in bid_history %}
+    
+                            <li>{{ bid |linebreaksbr }}</li>
+    
+                        {% endfor %}
+                        </ul>
+    
+                    {% else %}
+    
+                    <p>No bids have been made on this item yet.</p>
+    
+                    {% endif %}
+                </div>
+            </div>
+            <div class="right-side">
+                <div class="listing-details-box">
+                    <p><i><strong>Listing Details</strong></i></p>
+                    <ul>
+                        <li> Item: {{ listing.listing_title }}</li>
+                        <li> Seller: {{ listing.user.username }} </li>
+                        <li> Listed At: {{ listing.listing_date_time }}</li>
+                        <li> Latest Closing Time:  {{ time_left }}</li>
+                        <li> Number of Bids: {{ number_bids }}</li>
+                            {% if reserve_met %}
+                            <li> Reserve Met: Yes</li>
+                            {% else %}
+                            <li>Reserve Met: No</li>
+                            {% endif %}
+                        {% if number_bids > 0 %}
+                        <li> Current Price: £{{ highest_bid }}</li>
+                        {% else %}
+                        <li> Starting Price: £{{ highest_bid }}</li>
+                        {% endif %}
+                    </ul>
+                    <p><i><strong>Description:</strong></p>
+                    <p> {{ listing.listing_details }}</p>
+                </div>
+                <div class = "follower-count-bar">
+                    <div id="followerAccordion">
+                        <div class="follow-card">
+                          <div>
+                              <button class="btn btn-secondary btn-follow following-dropdown" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Followers: {{ following_count }}
+                              </button>
+                          </div>
+                      
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#followerAccordion">
+                        <div class="follow-card-body">
+                            {% if listing.following.all %}
+                                <p class="follower-list">
+                                    {% for follower in listing.following.all %}
+                                    • {{ follower.username }}
+                                </p>
+                                    {% endfor %}
+                            {% else %}
+                            None.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                </div>
+                {% if user.is_authenticated  %}
+                <div class="follow-unfollow-button">
+                    {% if following %}
+                    <a href="{% url 'listing_details_with_follow_action' listing_id=listing.id follow_action='unfollow' %}" class="btn btn-primary">Un-Follow</a>
+                    {% else %}
+                    <a href="{% url 'listing_details_with_follow_action' listing_id=listing.id follow_action='follow'%}" class="btn btn-primary">Follow</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+                </div>
             </div>
         </div>
-
-        <div>
-            <p><strong class="details-title">Details</strong></p>
-        </div>
-        <div>
-            <p> {{ listing.listing_details }} </p>
-        </div>
-
-
-        <div>
-            Current Price: £{{ listing.current_bid }}
-        </div>
-
-        <div>
-            <p class="listing_time"><i><strong>Listing Time:</i></strong> {{ listing.listing_date_time }}</p>
-            <p class="closing_time"><i><strong>Latest Closing Time:</i></strong> {{ listing.closing_time }}</p>
-            <small>N.b. The seller can close a listing prematurely so there is no guarantee that the auction will remain
-                open for this long.</small>
-        </div>
-
-
-
-        <div class="bid_history">
-            <h5>Bidding History</h5>
-            {% for bid in bid_history %}
-
-            <p>{{ bid}}</p>
-
-
-            {% endfor %}
-        </div>
-
-        <div>
-            <form method="POST" action="{% url 'newbid' listing_id=listing_num %}">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <input type="submit" value="Submit Bid" class="btn btn-primary">
-            </form>
-        </div>
-
         <div class="comments-box form-container">
-            <form method="POST" action="{% url 'comment' listing_id=listing_num %}">
+            <h3 class="comments-title">Comments ({{ number_comments }})</h3>
+            <p><strong>{{user.username}}</strong></p>
+            <p><small>Comments are subject to our community standards and participation guidelines policy, which can be viewed <a href ="{% url 'commentguidelines' listing_id=listing_num %}">here.</a> By joining the conversation you are accepting our community rules and terms.</small></p>
+            {% if user.is_authenticated %}
+            <form class="comment-form" method="POST" action="{% url 'comment' listing_id=listing_num %}">
                 {% csrf_token %}
-                {{ comment_form.as_p }}
+                {{ comment_form }}
                 <input type="submit" value="Submit Comment" class="btn btn-primary">
             </form>
+            {% endif %}
+
             {% if not comments %}
             <p>No Comments for this Item</p>
             {% else %}
-            <ul>
-            {% for comment in comments %}
-            <li>
-                {{ comment.user}}
-                {{ comment.comment_content }}
-                {{ comment.comment_time }}
-            </li>
-            {% endfor %}
-            </ul>
+                {% for comment in comments %}
+                <div class="comment">
+                    <div class="Initial-section">
+                        {{ user_initial }}
+                    </div>
+                    <div>
+                        <div class="commenter-name">{{ comment.user.username}}</div>
+                        <div class="commenter-time">{{ comment.comment_time }}</div>
+                        <div class="comment-content">{{ comment.comment_content }}</div>
+                    </div>
+                </div>
+                {% endfor %}
             {% endif %}
-
-
-
         </div>
-
+    </div>
 </main>
 
 {% endblock %}
