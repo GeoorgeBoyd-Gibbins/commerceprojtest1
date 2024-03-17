@@ -13,8 +13,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.timezone import now, timedelta, timezone
 
-from .models import Category, Listing, Comment, Bid, User
-from .forms import ListingForm, BidForm, CommentForm
+from .models import Category, Listing, Comment, Bid, User, CommentLike
+from .forms import ListingForm, BidForm, CommentForm, CommentReplyForm
 
 
 
@@ -380,7 +380,7 @@ def new_listing(request):
         )
 
 
-def listing_details(request, listing_id, follow_action=None):
+def listing_details(request, listing_id, follow_action=None, comment_like_action=None, comment_id=None):
     listing = get_object_or_404(Listing, pk=listing_id)
     user = request.user
     username = user.username.title()
@@ -393,6 +393,22 @@ def listing_details(request, listing_id, follow_action=None):
             listing.following.remove(user)
         
         return redirect('listing_details', listing_id=listing_id)
+    
+    if comment_like_action and user.is_authenticated:
+        if comment_like_action == 'like':
+            comment = get_object_or_404(Comment, pk=comment_id)
+            CommentLike.objects.get_or_create(comment=comment, user=user)
+
+        elif comment_like_action == 'unlike':
+            comment = get_object_or_404(Comment, pk=comment_id)
+            CommentLike.objects.filter(comment=comment, user=user).delete() 
+
+        return redirect('listing_details', listing_id=listing_id)
+
+
+
+             
+
 
     if request.method == "POST":
         new_bid_str = request.POST.get("amount", '0')
@@ -434,9 +450,18 @@ def listing_details(request, listing_id, follow_action=None):
         # this request is not POST, initiate forms for Listing Details Page
         form = BidForm()
         comment_form = CommentForm()
+        reply_form = CommentReplyForm()
 
-        comments = Comment.objects.filter(listing=listing)
+        comments = Comment.objects.filter(listing=listing).order_by('-comment_time')
         number_comments = comments.count()
+
+        # Get the IDs of comments the current user has liked, if the user is authenticated
+        if request.user.is_authenticated:
+            user_likes = CommentLike.objects.filter(user=request.user).values_list('comment_id', flat=True)
+        else:
+            user_likes = []
+
+
         
         # Set user bid default values. 
         reserve_met = False
@@ -504,9 +529,11 @@ def listing_details(request, listing_id, follow_action=None):
                         'following' : following,
                         'followers' : followers, 
                         'following_count' : following_count, 
-                        'comment_form' : comment_form, 
+                        'comment_form' : comment_form,
+                        'reply_form' : reply_form, 
                         'comments' : comments,
-                        'number_comments' : number_comments, 
+                        'number_comments' : number_comments,
+                        'user_likes' : user_likes, 
                         'time_left' : time_left_str,
                         'number_bids' : number_bids,
                         'highest_bid' : highest_bid_amount,
@@ -515,7 +542,8 @@ def listing_details(request, listing_id, follow_action=None):
                         'user_bid_amount' : user_bid_amount,
                         'number_user_bids' : number_user_bids, 
                         'is_highest_bidder' : is_highest_bidder,
-                        'bid_superceeded' : bid_superceeded, 
+                        'bid_superceeded' : bid_superceeded,
+
             }) 
         
         else:
@@ -534,7 +562,8 @@ def listing_details(request, listing_id, follow_action=None):
                         'following_count' : following_count, 
                         'comment_form' : comment_form, 
                         'comments' : comments,
-                        'number_comments' : number_comments, 
+                        'number_comments' : number_comments,
+                        'user_likes' : user_likes, 
                         'time_left' : time_left_str,
                         'number_bids' : number_bids,
                         'highest_bid' : starting_price,

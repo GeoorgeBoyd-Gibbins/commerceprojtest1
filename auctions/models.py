@@ -27,7 +27,6 @@ class Category(models.Model):
 
     
 class Listing(models.Model):
-
     # define model
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null = True, blank=True, related_name="listings")
     listing_title = models.CharField(max_length=256, verbose_name="Title")
@@ -64,14 +63,44 @@ class Listing(models.Model):
 
 class Comment(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comments", verbose_name="Comentor")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_comments", verbose_name="Comentor")
     comment_content = models.CharField(max_length=5000, verbose_name="Comment")
     comment_time = models.DateTimeField(default= now, verbose_name="Comment Made at")
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="replies", verbose_name="Reply")
     
     def __str__(self):
         return f"Comment by {self.user} on {self.listing} at {self.comment_time}. Comment: {self.comment_content}"
+
+    def num_parents(self):
+        count = 0
+        current_comment = self
+        while current_comment.parent is not None:
+            count += 1
+            current_comment = current_comment.parent
+        return count
+
+        
+    def count_replies(self):
+        return self.replies.count()
     
 
+    
+class CommentLike(models.Model):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="comment_likes")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_likes")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('comment', 'user')  # Ensures a user can only like a comment once
+        verbose_name = "Comment Like"
+        verbose_name_plural = "Comment Likes"
+        ordering = ['-created_at']
+    
+    def count_likes(self):
+        return self.comment_likes.count()
+
+
+    
 
 
 

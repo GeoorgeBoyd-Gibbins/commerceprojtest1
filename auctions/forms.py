@@ -31,3 +31,30 @@ class CommentForm(ModelForm):
     class Meta:
         model= Comment
         fields = ['comment_content']
+        labels = {'comment_content' : False}
+        widgets = {
+            'comment_content': forms.Textarea(attrs={
+            'placeholder': 'Join the conversation...',
+            'class': 'form-control comment-entry-box',
+            'rows': 1,
+            'style': 'width: 100%; overflow:hidden; resize:none;',
+            }),
+        }
+
+
+class CommentReplyForm(ModelForm):
+
+    class Meta:
+        model= Comment
+        fields = ['comment_content']
+        labels = {'comment_content' : False}
+        widgets = {
+            'comment_content': forms.Textarea(attrs={
+            'placeholder': 'Reply to this comment...',
+            'class': 'form-control comment-reply-entry-box',
+            'rows': 4,
+            'style': 'width: 100%; overflow:hidden; resize:none;',
+            }),
+        }
+
+

@@ -10,7 +10,7 @@ body {
     padding: 20px;
     border-radius: 3px;
     /* Optional: for rounded corners */
-    background-color: rgb(255, 253, 253);
+    background-color: rgb(255, 254, 254);
 }
 
 
@@ -64,8 +64,6 @@ body {
     min-width: 60%;
     min-height: 100%;
     /* Maximum height */
-
-
     vertical-align: top;
 }
 
@@ -73,14 +71,16 @@ body {
     min-width: 30%;
     /* Maximum width */
     max-width: 50%;
-    min-height: 20%;
+    min-height: 35%;
     /* Maximum height */
 
     height: auto;
     /* Maintains aspect ratio */
     object-fit: cover;
+    display: block;
 
 }
+
 
 .listing_details {
     margin: 5px 5px 5px 5px;
@@ -140,8 +140,12 @@ body {
 
 .comments-box {
     border: 1px solid slategray;
-    padding : 1rem; 
+    padding-top: 60px; 
+    padding-bottom: 2rem; 
+    padding-left: 5%;
+    padding-right: 7.5%;
     border-radius: 4px;
+    margin-top: 1rem;
 }
 
 .pagination {
@@ -193,24 +197,28 @@ body {
 }
 
 .wishlist-widget {
-    color : rgb(152, 4, 4);
-    background-color: rgb(185, 184, 184);
+    color : rgb(0, 132, 29);
+    background-color: rgb(225, 221, 221);
     border: 1px solid black;
-    padding-left: 1px;
-    padding-right: 1px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 1px;
+    padding-bottom: 1px;
     font-size: smaller;
+    font-weight: 500;
+    border-radius: 2px;
 
 }
 
 
 .listing-details-container {
-    margin-left: 3rem;
-    margin-right: 3rem;
-    margin-bottom: 3rem;
+    margin: 4rem;
+    margin-top: 2rem
+    ;
     border: 1px solid slategray;
     background-color: rgb(249, 241, 231);
     box-shadow: 8px 8px 6px rgb(170, 152, 127);
-    padding: 1.5rem;
+    padding: 3rem;
     border-radius: 4px;
     
 
@@ -242,13 +250,18 @@ body {
     flex-grow: 0.4; /* This makes the input field grow to fill the available space */
     padding: 6PX 12px;
     margin-top: 25px;
-    width: 30 V0px
+    width: 50%;
+    margin-right: 10px;
+    margin-bottom: 1rem; /* Adjusted for consistency */
+    padding: 0.5rem 1rem; /* Increased padding for better touch targets */
 }
 
 .bid-submit {
     flex-shrink: 0; /* This prevents the button from shrinking */
     margin-top: 14px;
-    margin-bottom: 20px;
+    margin-right: 10px;
+    margin-bottom: 1rem; /* Adjusted for consistency */
+    padding: 0.5rem 1rem; /* Increased padding for better touch targets */
 }
 
 
@@ -264,8 +277,9 @@ body {
     color: rgb(3, 33, 3);
     font-size: 1rem;
     border: slategray solid 1px;
-    padding:0.5rem;
+    padding:1.5rem;
     border-radius: 4px;
+    margin-bottom: 2rem; /* Add more space between sections */
 
 }
 
@@ -274,8 +288,9 @@ body {
     color: hsl(0, 69%, 11%);
     font-size: 1rem;
     border: slategray solid 1px;
-    padding:0.5rem;
+    padding:1.5rem;
     border-radius: 4px;
+    margin-bottom: 2rem; /* Add more space between sections */
     
 }
 
@@ -284,8 +299,9 @@ body {
     color: hsl(60, 55%, 16%);
     font-size: 1rem;
     border: slategray solid 1px;
-    padding:0.5rem;
+    padding:1.5rem;
     border-radius: 4px;
+    margin-bottom: 2rem; /* Add more space between sections */
     
 
 }
@@ -295,18 +311,22 @@ body {
     margin-right: 1.5rem;
     border: 1px solid slategray;
     min-width: 60%;
-    padding: 2rem;
+    padding: 1.5rem;
     min-height: 80%;
     border-radius: 4px;
+    margin-bottom: .5rem; /* Add more space between sections */
     
 }
 
 
 .two-cols {
-    gap: 2.5%;
+    gap: 3rem;
     display: grid;
-    grid-template-columns: 38% 1fr;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    grid-template-rows: auto 1fr; /* Adjust based on your content */
     align-items: top;
+    min-height: fit-content;
 }
 
 .follower-count-bar {
@@ -314,7 +334,7 @@ body {
     grid-template-columns: 30% 1fr;
     margin-top: 0.75rem; 
     background-color: rgb(249, 241, 231);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .follower-count {
@@ -401,40 +421,13 @@ body {
     margin-bottom: 0;
 }
 
-.commenter-name{
-    font-weight: 600;
-}
-
-.commenter-time {
-    font-weight: 50;
-    color: darkgrey;
-    padding-bottom: 0.25rem;
-}
-
-.comments-title {
-    font-weight: 250;
-}
-
-.comment {
-    width: 92.5%;
-    padding-bottom: 1.5rem;
-    border-bottom: lightgray 1px solid;
-    margin-bottom: 1.25rem;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.comment-form {
-    padding-bottom: 1.75rem;
-}
-
 .own-item-pane {
     margin-top: 1.5rem;
     background-color: rgb(213, 223, 252);
     color: rgb(3, 33, 3);
     font-size: 1rem;
     border: slategray solid 1px;
-    padding:.75rem;
+    padding:.9rem;
     border-radius: 4px;
 }
 
@@ -495,4 +488,300 @@ body {
     letter-spacing: -2px;
 
 
+}
+
+.Initial-section {
+    display: inline-block;
+    background-color: rgb(235, 235, 235);
+    color: #040000;
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 40px; /* set to same size as width, height */
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    border: slategray 1px solid;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: 600;
+
+
+}
+
+
+
+.comment-entry-parent {
+    display: flex;
+    gap : 3rem;
+    border-bottom: 1px lightgray solid;
+    align-items: top; /* This ensures vertical alignment is centered */
+    width: 100%; /* Ensure it spans the full width of its parent */
+    margin-bottom: 1.5rem;
+}
+
+.comment-guidelines-disclimer{
+    margin-bottom: 2%;
+}
+
+.comment-box-initial-section {
+    flex: 0 0 auto;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 40px;
+    flex-grow: 1;
+
+
+}
+
+
+.comment-form-parent {
+    flex-grow: 1;
+    width: 100%; /* This ensures it attempts to fill the space */
+
+}
+
+
+.comment-entry-box {
+    width: 100%; /* This ensures it attempts to fill the space */
+    overflow:hidden; 
+    resize:none;
+    transition: height 0.4s; 
+    height: 20px; 
+    align-items: top !important;
+}
+
+.comment-entry-button {
+    margin-top: .75rem;
+    margin-left: auto !important;
+    display: none; /* Button is hidden by default */
+    transition: opacity 0.2s; /* Optional: Smooth transition for the button appearance */
+
+}
+
+
+.comment-entry-box:focus {
+    height: 100px; /* Adjusted height to match roughly 4 lines, adjust based on your styling */
+}
+
+.comment-form:focus-within .comment-entry-button {
+    display: block; /* Show the button when any element within .comment-form is focused */
+    opacity: 1;
+}
+
+.comment-entry-button {
+    display: none; /* Keep the button hidden by default */
+    transition: opacity 0.2s;
+    margin-left: auto !important;
+    margin-top: .75rem;
+}
+
+
+.commenter-name{
+    font-weight: 600;
+}
+
+.commenter-time {
+    font-weight: 50;
+    color: darkgrey;
+    padding-bottom: 0.25rem;
+}
+
+.comments-title {
+    font-weight: 250;
+}
+
+.comment {
+    width: 95.5%;
+    padding: 0 2rem 2rem 0;
+    border-bottom: lightgray 1px solid;
+    border-radius: 4px;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-grow: 1;
+    gap: 3rem;
+    margin-bottom: 1rem; 
+}
+
+.comment-initial-section {
+    flex: 0 0 auto;
+}
+
+
+@keyframes bounceGlowAndShake {
+    0%, 100% {
+      transform: translateY(0);
+      text-shadow: none;
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: translateY(0) rotate(-0.5deg);
+      text-shadow: 0 0 8px #FFF;
+    }
+    20%, 40%, 60%, 80% {
+      transform: translateY(-10px) rotate(0.5deg);
+      text-shadow: 0 0 8px #FFF;
+    }
+    45% {
+      transform: translateY(-15px);
+      text-shadow: 0 0 12px #FFF;
+    }
+    55% {
+      transform: translateY(-7px);
+      text-shadow: 0 0 12px #FFF;
+    }
+  }
+  
+.reserve-met-icon {
+      padding: 10px 20px;
+      margin-top: 2rem;
+      margin-right: auto;
+      font-size: 1.4rem;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      color: #ffffff;
+      background-color: #838383; /* Darker background for contrast */
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      animation: bounceGlowAndShake 1s ease forwards;
+      position: relative;
+      border: none; /* Ensures it doesn't look like a button */
+      position: relative; /* Ensure this is set for absolute positioning of pseudo-elements */
+      overflow: visible; /* Allow the fireworks to show outside the icon bounds */
+  }
+  
+.reserve-met-icon::after, .reserve-met-icon::before {
+      content: '';
+      position: absolute;
+      top: -20px; /* Adjust based on your preference */
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: radial-gradient(circle, #ffffff 0%, #ffffff 40%, transparent 70%);
+      border-radius: 50%;
+      animation: fireworks 1.5s ease-in-out infinite;
+      opacity: 1;
+  }
+  
+  
+  @keyframes blink {
+    25% { opacity: 0; }
+  }
+  
+  /* Adjusting the glow effect for smoother transition */
+  @keyframes glow {
+      0%, 100% { text-shadow: 0 0 8px #FFF; }
+      50% { text-shadow: 0 0 20px #FFF, 0 0 30px #FF4500; }
+  }
+
+  
+/* Firework sparks */
+.reserve-met-icon::after, .reserve-met-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 2px;
+    background: #FFF;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: firework-burst 1.2s ease-out forwards;
+}
+
+/* Additional sparks */
+.reserve-met-icon::before {
+    animation-delay: 0.1s; /* Slight delay to vary the animation */
+}
+
+@keyframes firework-burst {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(20);
+        background: transparent;
+    }
+}
+
+/* Multiple sparks using additional pseudo-elements */
+.reserve-met-icon::after {
+    content: '';
+    /* Repeated styles for additional sparks */
+    animation: firework-spark 1.2s ease-out forwards;
+}
+
+@keyframes firework-spark {
+    0% {
+        opacity: 1;
+        box-shadow:
+            10px 10px #FFF,
+            -10px -10px #FFD700,
+            10px -10px #FF4500,
+            -10px 10px #4B0082;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(3);
+        box-shadow:
+            20px 20px #FFF,
+            -20px -20px #FFD700,
+            20px -20px #FF4500,
+            -20px 20px #4B0082;
+    }
+}
+ 
+
+
+.comment-reply-entry-box {
+    width: 100%; /* This ensures it attempts to fill the space */
+    overflow:hidden; 
+    resize:none;
+
+}
+
+.comment-body-section {
+    min-width: 100%;
+}
+
+.comment-reply-form {
+
+    margin-top: 1rem;
+}
+
+#comment-like-reply-button-flexbox {
+    display: flex;
+    gap: 1rem;
+}
+
+.comment-like-btn {
+    color: rgb(47, 126, 253);
+}
+
+.comment-like-btn:hover {
+    background-color: #e8e8e8;
+
+}
+
+.comment-reply-btn {
+    color: rgb(47, 126, 253);
+}
+
+.comment-reply-btn:hover {
+    background-color: #e8e8e8;
+
+}
+
+.submit-reply-button {
+    margin-top: 1rem;
+}
+
+.reply-submitt-button-container {
+    display: flex;
+    justify-content: flex-end;
 }
