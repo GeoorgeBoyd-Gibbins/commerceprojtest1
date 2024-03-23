@@ -12,9 +12,12 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotAllow
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.timezone import now, timedelta, timezone
+from collections import defaultdict
 
 from .models import Category, Listing, Comment, Bid, User, CommentLike
 from .forms import ListingForm, BidForm, CommentForm, CommentReplyForm
+
+from .utils import build_comment_tree
 
 
 
@@ -405,11 +408,6 @@ def listing_details(request, listing_id, follow_action=None, comment_like_action
 
         return redirect('listing_details', listing_id=listing_id)
 
-
-
-             
-
-
     if request.method == "POST":
         new_bid_str = request.POST.get("amount", '0')
 
@@ -452,8 +450,12 @@ def listing_details(request, listing_id, follow_action=None, comment_like_action
         comment_form = CommentForm()
         reply_form = CommentReplyForm()
 
-        comments = Comment.objects.filter(listing=listing).order_by('-comment_time')
-        number_comments = comments.count()
+        top_level_comments = Comment.objects.filter(listing=listing, parent__isnull=True).order_by('-comment_time')
+        number_comments = top_level_comments.count()
+        comments_tree = build_comment_tree(top_level_comments)
+
+
+
 
         # Get the IDs of comments the current user has liked, if the user is authenticated
         if request.user.is_authenticated:
@@ -530,8 +532,9 @@ def listing_details(request, listing_id, follow_action=None, comment_like_action
                         'followers' : followers, 
                         'following_count' : following_count, 
                         'comment_form' : comment_form,
-                        'reply_form' : reply_form, 
-                        'comments' : comments,
+                        'reply_form' : reply_form,
+                        'top_level_comments' : top_level_comments, 
+                        'comments_tree' : comments_tree,
                         'number_comments' : number_comments,
                         'user_likes' : user_likes, 
                         'time_left' : time_left_str,
@@ -560,8 +563,9 @@ def listing_details(request, listing_id, follow_action=None, comment_like_action
                         'following' : following,
                         'followers' : followers, 
                         'following_count' : following_count, 
-                        'comment_form' : comment_form, 
-                        'comments' : comments,
+                        'comment_form' : comment_form,
+                        'top_level_comments' : top_level_comments, 
+                        'comments_tree' : comments_tree,
                         'number_comments' : number_comments,
                         'user_likes' : user_likes, 
                         'time_left' : time_left_str,
@@ -605,28 +609,57 @@ def comment(request, listing_id):
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             comment_content = comment_form.cleaned_data['comment_content']
+        else:
+            messages.error(request, "Invalid submission. Please check your input.")
+            return redirect("listing_details", listing_id=listing_id)
     
-    # Create a new comment object
-    new_comment = Comment()
+        # Create a new comment object
+        new_comment = Comment()
 
-    # populate comment object fields
-    new_comment.user = request.user
+        # populate comment object fields
+        new_comment.user = request.user
 
-    new_comment.comment_content = comment_content
+        new_comment.comment_content = comment_content
 
-    new_comment.listing = get_object_or_404(Listing, pk=listing_id)
+        new_comment.listing = get_object_or_404(Listing, pk=listing_id)
 
-    # Save the new comment
-    new_comment.save()
+        # Save the new comment
+        new_comment.save()
+
+        
+        #listings = Listing.objects.filter(auction_open=True)    
+        #paginator = Paginator(listings, 5)
+        #page_number = request.GET.get("page")
+        #page_obj = paginator.get_page(page_number)
+
+        messages.success(request, "Thanks for your comment.")
+        return redirect("listing_details", listing_id=listing_id)
+    else:
+        messages.error(request, "Invalid submission. Please check your input.")
+        return redirect("listing_details", listing_id=listing_id) 
 
 
-    listings = Listing.objects.filter(auction_open=True)
-    paginator = Paginator(listings, 5)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
 
-    messages.success(request, "Thanks for your comment.")
-    return redirect("listing_details", listing_id=listing_id) 
+def comment_reply(request, listing_id, parent_id):
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            new_comment = form.save(commit=False)
+            new_comment.user = request.user
+            new_comment.listing = get_object_or_404(Listing, pk=listing_id)
+            new_comment.parent = get_object_or_404(Comment, pk=parent_id)  # Set the parent comment
+            new_comment.save()
+            messages.success(request, "Thanks for your comment.")
+            return redirect("listing_details", listing_id=listing_id)
+        else:
+            messages.error(request, "Invalid submission. Please check your input.")
+            return redirect("listing_details", listing_id=listing_id)
+    else:
+        messages.error(request, "Invalid submission. This method is not allowed.")
+        return redirect("listing_details", listing_id=listing_id)
+ 
+
+
 
 def categories(request):
     available_categories = Category.objects.all()
@@ -634,6 +667,10 @@ def categories(request):
     return render(request, "auctions/categories.html", {
         "categories" : available_categories, 
     } )
+
+
+
+
 
 def category_listings(request, category_name):
 

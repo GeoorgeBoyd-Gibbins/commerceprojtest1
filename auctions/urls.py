@@ -12,6 +12,7 @@ urlpatterns = [
     path('listing/<int:listing_id>/<str:follow_action>/', views.listing_details, name='listing_details_with_follow_action'),
     path('watchlist', views.watchlist, name = "watchlist"), 
     path('comment/<int:listing_id>/', views.comment, name="comment"),
+    path('comment/reply/<int:listing_id>/<int:parent_id>/', views.comment_reply, name="comment_reply"),
     path('categories', views.categories, name="categories"), 
     path('category_listings/<str:category_name>/', views.category_listings, name="category_listings"),
     path('commentguidelines/<int:listing_id>/', views.commentguidelines, name="commentguidelines"),

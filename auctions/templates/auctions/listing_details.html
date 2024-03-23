@@ -1,5 +1,6 @@
 {% extends "auctions/layout.html" %}
 {% load static %}
+{% load comment_filters %}
 {% block body %}
 
 {% if messages %}
@@ -228,22 +229,21 @@
             </div>
             {% endif %}
 
-            {% if not comments %}
+            {% if not top_level_comments %}
             <p>No Comments for this Item</p>
             {% else %}
                 {% load humanize %}
                 
-                {% for comment in comments %}
+                {% for comment in top_level_comments %}
                 <div class="comment">
-                    {% if user.is_authenticated %}
                     <div class="Initial-section comment-initial-section">
                         <i>{{ comment.user.username |slice:":1"  }}</i>
                     </div>
-                    {% endif %}
                     <div class="comment-body-section">
-                        <div class="commenter-name"><i>{{ comment.user.username }}</div>
-                        <div class="commenter-time">{{ comment.comment_time|timesince }} ago</i></div>
-                        <div class="comment-content">{{ comment.comment_content }}</div>
+                        <div>{{ comment.user.username }}</div>
+                        <div>{{ comment.comment_time | timesince }}</div>
+                        <div>{{ comment.comment_content }}</div>
+
                         {% if user.is_authenticated  %}
                         <div id="comment-like-reply-button-flexbox">
                                 <div class="comment-like-button">
@@ -258,9 +258,10 @@
                                 </div>
                         </div>
                         <div id="replyForm-{{ comment.id }}" class="comment-reply-form" style="display: none;">
-                            <form class="reply-form" method="POST" action="{% url 'comment' listing_id=listing_num %}">
+                            <form class="reply-form" method="POST" action="{% url 'comment_reply' listing_id=listing_num parent_id=comment.id %}">
                                 {% csrf_token %}
                                 {{ reply_form }}
+                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
                                 <div class="reply-submitt-button-container">
                                     <input type="submit" value="Submit Reply" class="btn btn-primary submit-reply-button">
                                 </div>
@@ -269,6 +270,11 @@
                         {% endif %}
                     </div>
                 </div>
+                {% with comments_tree|get_replies:comment as replies %}
+                {% if replies %}
+                    {% include "auctions/comment.html" with comment=comment comments_tree=replies %}
+                {% endif %}
+                {% endwith %}
                 {% endfor %}
             {% endif %}
         </div>

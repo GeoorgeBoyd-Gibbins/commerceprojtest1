@@ -1,0 +1,44 @@
+
+{% if comments_tree|length > 0 %}
+<div class="replies">
+    <!-- Directly iterate over the replies list -->
+    {% for reply in comments_tree %}
+    <div class="reply-container">
+        <div class="Initial-section comment-initial-section">
+            <i>{{ reply.user.username |slice:":1"  }}</i>
+        </div>
+        <div class="comment-body-section">
+            <div>{{ reply.user.username }}</div>
+            <div>{{ reply.comment_time | timesince }}</div>
+            <div>{{ reply.comment_content }}</div>
+
+            {% if user.is_authenticated  %}
+            <div id="comment-like-reply-button-flexbox">
+                    <div class="comment-like-button">
+                        {% if reply.id in user_likes %}
+                        <a href="{% url 'listing_details_with_comment_like_action' listing_id=listing.id comment_id=comment.id comment_like_action='unlike' %}" class="btn comment-like-btn"><i class="fas fa-star"></i> Unlike ({{ comment.comment_likes.count }})</a>
+                        {% else %}
+                        <a href="{% url 'listing_details_with_comment_like_action' listing_id=listing.id comment_id=comment.id comment_like_action='like' %}" class="btn comment-like-btn"><i class="far fa-star"></i> Like ({{ comment.comment_likes.count }})</a>
+                        {% endif %}
+                    </div>
+                    <div class="comment-reply-button">
+                        <button class="btn comment-reply-btn" onclick="toggleReplyForm('replyForm-{{ comment.id }}')">Reply</button>
+                    </div>
+            </div>
+            <div id="replyForm-{{ comment.id }}" class="comment-reply-form" style="display: none;">
+                <form class="reply-form" method="POST" action="{% url 'comment_reply' listing_id=listing_num parent_id=reply.id %}">
+                    {% csrf_token %}
+                    {{ reply_form }}
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                    <div class="reply-submitt-button-container">
+                        <input type="submit" value="Submit Reply" class="btn btn-primary submit-reply-button">
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
